@@ -10,7 +10,7 @@ use helix_core::{visual_offset_from_block, Position, RopeSlice};
 use helix_stdx::rope::RopeSliceExt;
 use helix_view::editor::{WhitespaceConfig, WhitespaceRenderValue};
 use helix_view::graphics::Rect;
-use helix_view::theme::Style;
+use helix_view::theme::{Modifier, Style};
 use helix_view::view::ViewPosition;
 use helix_view::Document;
 use helix_view::Theme;
@@ -441,11 +441,13 @@ impl<'a> TextRenderer<'a> {
             starting_indent: col_offset / indent_width as usize
                 + (col_offset % indent_width as usize != 0) as usize
                 + editor_config.indent_guides.skip_levels as usize,
-            indent_guide_style: text_style.patch(
-                theme
-                    .try_get("ui.virtual.indent-guide")
-                    .unwrap_or_else(|| theme.get("ui.virtual.whitespace")),
-            ),
+            indent_guide_style: text_style
+                .patch(
+                    theme
+                        .try_get("ui.virtual.indent-guide")
+                        .unwrap_or_else(|| theme.get("ui.virtual.whitespace")),
+                )
+                .remove_modifier(Modifier::ITALIC | Modifier::SLOW_BLINK | Modifier::RAPID_BLINK),
             text_style,
             draw_indent_guides: editor_config.indent_guides.render,
             viewport,
